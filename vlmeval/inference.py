@@ -123,6 +123,7 @@ def infer_data(model, model_name, work_dir, dataset, out_file, verbose=False, ap
     # (In VLMEvalKit, we use torchrun to launch multiple model instances on a single node).
     # To bypass this problem, we unset `WORLD_SIZE` before building the model to not use TP parallel.
     ws_bak = os.environ.pop('WORLD_SIZE', None)
+    # import pdb; pdb.set_trace()
     model = supported_VLM[model_name](**kwargs) if isinstance(model, str) else model
     if ws_bak:
         os.environ['WORLD_SIZE'] = ws_bak
@@ -157,7 +158,6 @@ def infer_data(model, model_name, work_dir, dataset, out_file, verbose=False, ap
             struct = model.build_prompt(data.iloc[i], dataset=dataset_name)
         else:
             struct = dataset.build_prompt(data.iloc[i])
-
         # If `SKIP_ERR` flag is set, the model will skip the generation if error is encountered
         if os.environ.get('SKIP_ERR', False) == '1':
             FAIL_MSG = 'Failed to obtain answer'

@@ -1271,17 +1271,47 @@ qwen3vl_series = {
         top_p=0.8,
         top_k=20
     ),
-    "Qwen3-VL-4B-Instruct": partial(
+    "visionary_r1.Qwen3-VL-4B-Instruct-lightSFT.ep1.filter_easy_data_all.1thinker_rfn.lr1e-6.bs128.mbs32.mxt4096.n8.kl1e-2.step200______________mxt8192.greedy": partial(
         Qwen3VLChat,
-        model_path="Qwen/Qwen3-VL-4B-Instruct",
+        model_path="/root/paddlejob/workspace/env_run/output/rqli/models/Verl_trained_ckpt/visionary_r1.Qwen3-VL-4B-Instruct-lightSFT.ep1.filter_easy_data_all.1thinker_rfn.lr1e-6.bs128.mbs32.mxt4096.n8.kl1e-2.step200/merged_hf_model",
         use_custom_prompt=False,
         use_vllm=True,
-        temperature=0.7, 
-        max_new_tokens=16384,
-        repetition_penalty=1.0,
-        presence_penalty=1.5,
-        top_p=0.8,
-        top_k=20
+        do_sample=False,
+        max_new_tokens=8192,
+        system_prompt= (
+            "You are tasked with analyzing an image to generate an exhaustive and detailed description. "
+            "Your goal is to extract and describe all possible information from the image, including but not "
+            "limited to objects, numbers, text, and the relationships between these elements. The description "
+            "should be as fine and detailed as possible, capturing every nuance. After generating the detailed "
+            "description, you need to analyze it and provide step-by-step detailed reasoning for the given "
+            "question based on the information. Finally, provide a single word or phrase answer to the question. "
+            "The description, reasoning process and answer are enclosed within <info> </info>, <think> </think> "
+            "and <answer> </answer> tags, respectively, i.e., <info> image description here </info> "
+            "<think> reasoning process here </think> <answer> answer here </answer>.\n"
+        ),
+        # post_process=True
+        # repetition_penalty=1.0,
+        # presence_penalty=1.5,
+        # top_p=0.8,
+        # top_k=20
+    ),
+    "Qwen3-VL-4B-Instruct.mxt8192.greedy": partial(
+        Qwen3VLChat,
+        model_path="/root/paddlejob/workspace/env_run/output/rqli/models/Qwen3-VL/Qwen3-VL-4B-Instruct",
+        use_custom_prompt=False,
+        use_vllm=True,
+        do_sample=False,
+        max_new_tokens=8192,
+        # system_prompt=(
+        #     "You are a helpful assistant. When the user asks a question, your response must include two parts: "
+        #     "first, the reasoning process enclosed in <think>...</think> tags, then the final answer enclosed in <answer>...</answer> tags."
+        #     "Please provide a clear, concise response within <answer> </answer> tags that directly addresses the question."
+        # )
+        # temperature=0.7, 
+        # repetition_penalty=1.0,
+        # presence_penalty=1.5,
+        # top_p=0.8,
+        # top_k=20
     ),
     "Qwen3-VL-2B-Instruct": partial(
         Qwen3VLChat,
@@ -1750,7 +1780,10 @@ qwen2vl_series = {
     ),
     "Qwen2.5-VL-3B-Instruct": partial(
         Qwen2VLChat,
-        model_path="Qwen/Qwen2.5-VL-3B-Instruct",
+        # model_path="Qwen/Qwen2.5-VL-3B-Instruct",
+        model_path="/root/paddlejob/workspace/env_run/output/rqli/models/Qwen2.5-VL/Qwen2.5-VL-3B-Instruct",
+        max_new_tokens=8192,
+        use_vllm=True,
         min_pixels=1280 * 28 * 28,
         max_pixels=16384 * 28 * 28,
         use_custom_prompt=False,

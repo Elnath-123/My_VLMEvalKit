@@ -241,12 +241,15 @@ def main():
                     logger.warning(f'FWD_API is set, will use class `GPT4V` for {m}')
 
     if WORLD_SIZE > 1:
+        import torch
         import torch.distributed as dist
+        torch.cuda.set_device(0)
         dist.init_process_group(
             backend='nccl',
+            device_id=torch.device('cuda:0'),
             timeout=datetime.timedelta(seconds=int(os.environ.get('DIST_TIMEOUT', 3600)))
         )
-
+    # import pdb; pdb.set_trace()
     for _, model_name in enumerate(args.model):
         model = None
         date, commit_id = timestr('day'), githash(digits=8)

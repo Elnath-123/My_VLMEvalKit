@@ -1,0 +1,7 @@
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO cudaDriverVersion 12000
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to xgbe1
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO NCCL_SOCKET_IFNAME set to xgbe1
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO Bootstrap: Using xgbe1:10.67.196.146<0>
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO NCCL version 2.27.5+cuda12.9
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO init.cc:1798 Cuda Host Alloc Size 4 pointer 0x7fa100800000
+[2026-03-24 02:17:10] yq01-inf-hic-k8s-a100-aa24-0317:135930:135930 [0] NCCL INFO Comm config Blocking set to 1

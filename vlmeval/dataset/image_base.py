@@ -72,6 +72,7 @@ class ImageBaseDataset:
             data['index'] = [int(x) for x in data['index']]
 
         self.data = data
+        # self.data = data.head(5)
         self.post_build(dataset)
 
     def __len__(self):
