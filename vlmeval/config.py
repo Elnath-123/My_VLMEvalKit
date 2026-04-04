@@ -1300,7 +1300,43 @@ qwen3vl_series = {
         model_path="/root/paddlejob/workspace/env_run/output/rqli/models/Qwen3-VL/Qwen3-VL-4B-Instruct",
         use_custom_prompt=False,
         use_vllm=True,
-        do_sample=False,
+        temperature=0,
+        max_new_tokens=8192,
+        # system_prompt=(
+        #     "You are a helpful assistant. When the user asks a question, your response must include two parts: "
+        #     "first, the reasoning process enclosed in <think>...</think> tags, then the final answer enclosed in <answer>...</answer> tags."
+        #     "Please provide a clear, concise response within <answer> </answer> tags that directly addresses the question."
+        # )
+        # temperature=0.7, 
+        # repetition_penalty=1.0,
+        # presence_penalty=1.5,
+        # top_p=0.8,
+        # top_k=20
+    ),
+    "Qwen3-VL-4B-Instruct.mxt8192.official_sampling": partial(
+        Qwen3VLChat,
+        model_path="/root/paddlejob/workspace/env_run/output/rqli/models/Qwen3-VL/Qwen3-VL-4B-Instruct",
+        use_custom_prompt=False,
+        use_vllm=True,
+        temperature=0.7,
+        max_new_tokens=8192,
+        # system_prompt=(
+        #     "You are a helpful assistant. When the user asks a question, your response must include two parts: "
+        #     "first, the reasoning process enclosed in <think>...</think> tags, then the final answer enclosed in <answer>...</answer> tags."
+        #     "Please provide a clear, concise response within <answer> </answer> tags that directly addresses the question."
+        # )
+        # temperature=0.7, 
+        repetition_penalty=1.0,
+        presence_penalty=1.5,
+        top_p=0.8,
+        top_k=20
+    ),
+    "Qwen3-VL-4B-Instruct.mxt8192.greedy_debug": partial(
+        Qwen3VLChat,
+        model_path="/root/paddlejob/workspace/env_run/output/rqli/models/Qwen3-VL/Qwen3-VL-4B-Instruct",
+        use_custom_prompt=False,
+        use_vllm=True,
+        temperature=0,
         max_new_tokens=8192,
         # system_prompt=(
         #     "You are a helpful assistant. When the user asks a question, your response must include two parts: "

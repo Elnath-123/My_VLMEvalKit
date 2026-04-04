@@ -15,7 +15,7 @@ WORK_BASE=/root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit
 
 DATASETS=(
   # "MathVista_MINI"
-  # "MathVision_MINI"
+  "MathVision_MINI"
   # "MathVerse_MINI"
   # "MMBench_DEV_EN"
   # "MMStar"
@@ -23,22 +23,21 @@ DATASETS=(
   # "BLINK"
   # "HallusionBench"
   # "TableVQABench"
-  "OCRBench"
+  # "OCRBench"
 )
 
 
 SUFFIX="results"
 
-# export CUDA_VISIBLE_DEVICES="0"
+export CUDA_VISIBLE_DEVICES="0"
 
 for DATA in "${DATASETS[@]}"; do
 
   WORK_DIR="${WORK_BASE}/${SUFFIX}"
-  torchrun --nproc-per-node=8 /root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit/run.py \
+  python /root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit/run.py \
     --data "${DATA}" \
     --model "${MODEL}" \
     --judge "Qwen3-235B-A22B-Instruct-2507" \
     --work-dir "${WORK_DIR}" \
-    --verbose \
-    # --reuse
+    --verbose
 done
