@@ -23,8 +23,13 @@ WORLD_SIZE = int(os.environ.get('WORLD_SIZE', 1))
 LOCAL_WORLD_SIZE = int(os.environ.get("LOCAL_WORLD_SIZE",1))
 LOCAL_RANK = int(os.environ.get("LOCAL_RANK",1))
 
+# Guard: skip GPU partitioning in child processes spawned by vLLM/multiprocessing.
+# When multiprocessing.spawn re-executes this file, __name__ is '__mp_main__' (not '__main__'),
+# so we use this to detect spawn children and skip the GPU partitioning logic,
+# because CUDA_VISIBLE_DEVICES has already been set by the parent torchrun process.
+_is_mp_child = (__name__ == '__mp_main__')
 GPU_LIST = get_gpu_list()
-if LOCAL_WORLD_SIZE > 1 and len(GPU_LIST):
+if not _is_mp_child and LOCAL_WORLD_SIZE > 1 and len(GPU_LIST):
     NGPU = len(GPU_LIST)
     assert NGPU >= LOCAL_WORLD_SIZE, "The number of processes should be less than or equal to the number of GPUs"
     GPU_PER_PROC = NGPU // LOCAL_WORLD_SIZE
@@ -49,27 +54,53 @@ from vlmeval.smp import *
 from vlmeval.utils.result_transfer import MMMU_result_transfer, MMTBench_result_transfer
 
 
-# Make WORLD_SIZE invisible when build models
+# Make torchrun env vars invisible when building models to prevent vLLM port conflicts
 def build_model_from_config(cfg, model_name, use_vllm=False):
     import vlmeval.api
     import vlmeval.vlm
-    ws_bak = os.environ.pop('WORLD_SIZE', None)
+
+    _torchrun_env_vars = [
+        'WORLD_SIZE', 'MASTER_ADDR', 'MASTER_PORT', 'RANK', 'LOCAL_RANK',
+        'LOCAL_WORLD_SIZE', 'GROUP_RANK', 'ROLE_RANK', 'TORCHELASTIC_RUN_ID',
+    ]
+    _env_bak = {}
+    for _var in _torchrun_env_vars:
+        _val = os.environ.pop(_var, None)
+        if _val is not None:
+            _env_bak[_var] = _val
+
+    # Force vLLM to use loopback IP for TCPStore to avoid timeout under torchrun
+    _vllm_host_ip_bak = os.environ.get('VLLM_HOST_IP')
+    os.environ['VLLM_HOST_IP'] = '127.0.0.1'
+
+    # Disable vLLM V1 multiprocessing to avoid TCPStore timeout in spawned subprocess
+    _vllm_mp_bak = os.environ.get('VLLM_ENABLE_V1_MULTIPROCESSING')
+    os.environ['VLLM_ENABLE_V1_MULTIPROCESSING'] = '0'
 
     config = cp.deepcopy(cfg[model_name])
     if use_vllm:
         config['use_vllm'] = use_vllm
     if 'class' not in config:
-        return supported_VLM[model_name](**config)
-    cls_name = config.pop('class')
-    if hasattr(vlmeval.api, cls_name):
-        model = getattr(vlmeval.api, cls_name)(**config)
-    elif hasattr(vlmeval.vlm, cls_name):
-        model = getattr(vlmeval.vlm, cls_name)(**config)
+        model = supported_VLM[model_name](**config)
     else:
-        raise ValueError(f'Class {cls_name} is not supported in `vlmeval.api` or `vlmeval.vlm`')
+        cls_name = config.pop('class')
+        if hasattr(vlmeval.api, cls_name):
+            model = getattr(vlmeval.api, cls_name)(**config)
+        elif hasattr(vlmeval.vlm, cls_name):
+            model = getattr(vlmeval.vlm, cls_name)(**config)
+        else:
+            raise ValueError(f'Class {cls_name} is not supported in `vlmeval.api` or `vlmeval.vlm`')
 
-    if ws_bak:
-        os.environ['WORLD_SIZE'] = ws_bak
+    if _vllm_mp_bak is not None:
+        os.environ['VLLM_ENABLE_V1_MULTIPROCESSING'] = _vllm_mp_bak
+    elif 'VLLM_ENABLE_V1_MULTIPROCESSING' in os.environ:
+        del os.environ['VLLM_ENABLE_V1_MULTIPROCESSING']
+    if _vllm_host_ip_bak is not None:
+        os.environ['VLLM_HOST_IP'] = _vllm_host_ip_bak
+    elif 'VLLM_HOST_IP' in os.environ:
+        del os.environ['VLLM_HOST_IP']
+    for _var, _val in _env_bak.items():
+        os.environ[_var] = _val
     return model
 
 

@@ -142,6 +142,7 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
                 seed=0,
                 gpu_memory_utilization=kwargs.get("gpu_utils", 0.9),
                 trust_remote_code=True,
+                distributed_timeout_seconds=30,
             )
         else:
             if listinstr(['omni'], model_path.lower()):

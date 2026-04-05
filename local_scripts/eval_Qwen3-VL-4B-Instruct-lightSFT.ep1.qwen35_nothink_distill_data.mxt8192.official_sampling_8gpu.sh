@@ -13,7 +13,7 @@ WORK_BASE=/root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit
 
 DATASETS=(
   # "MathVista_MINI"
-  # "MathVision_MINI"
+  "MathVision_MINI"
   # "MathVerse_MINI"
   # "MMBench_DEV_EN"
   # "MMStar"
@@ -21,7 +21,7 @@ DATASETS=(
   # "BLINK"
   # "HallusionBench"
   # "TableVQABench"
-  "OCRBench"
+  # "OCRBench"
 )
 
 SUFFIX="results"

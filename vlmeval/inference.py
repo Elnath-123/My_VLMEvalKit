@@ -122,11 +122,59 @@ def infer_data(model, model_name, work_dir, dataset, out_file, verbose=False, ap
     # Transformers automatically adopt TP parallelism, which leads to compatibility problems with VLMEvalKit
     # (In VLMEvalKit, we use torchrun to launch multiple model instances on a single node).
     # To bypass this problem, we unset `WORLD_SIZE` before building the model to not use TP parallel.
-    ws_bak = os.environ.pop('WORLD_SIZE', None)
-    # import pdb; pdb.set_trace()
+    #
+    # Additionally, we must clean ALL torchrun-injected env vars to prevent vLLM EngineCore
+    # subprocess from inheriting them. Otherwise, multiple concurrent vLLM instances race on
+    # get_open_port() using the same MASTER_ADDR IP, causing TCPStore port collisions and hangs.
+    _torchrun_env_vars = [
+        'WORLD_SIZE', 'MASTER_ADDR', 'MASTER_PORT', 'RANK', 'LOCAL_RANK',
+        'LOCAL_WORLD_SIZE', 'GROUP_RANK', 'ROLE_RANK', 'TORCHELASTIC_RUN_ID',
+    ]
+    _env_bak = {}
+    for _var in _torchrun_env_vars:
+        _val = os.environ.pop(_var, None)
+        if _val is not None:
+            _env_bak[_var] = _val
+
+    # Fix vLLM get_open_port() TOCTOU race: when multiple vLLM instances start
+    # concurrently, they can all discover the same free port, causing TCPStore
+    # bind conflicts and 600s hangs. Assign each rank a unique VLLM_PORT so
+    # each vLLM instance scans from a different starting port.
+    _vllm_port_bak = os.environ.get('VLLM_PORT')
+    if world_size > 1:
+        _base_port = 29600
+        # Space ports 100 apart so each vLLM instance has room for multiple ports
+        os.environ['VLLM_PORT'] = str(_base_port + rank * 100)
+
+    # Fix vLLM UniProcExecutor TCPStore timeout: UniProcExecutor._distributed_args()
+    # uses get_ip() which returns the external network IP. Force loopback IP instead.
+    _vllm_host_ip_bak = os.environ.get('VLLM_HOST_IP')
+    os.environ['VLLM_HOST_IP'] = '127.0.0.1'
+
+    # Disable vLLM V1 multiprocessing: by default vLLM spawns EngineCore in a
+    # subprocess, but that subprocess's init_process_group(tcp://...) fails under
+    # torchrun because the spawned child cannot create a working TCPStore.
+    # With multiprocessing disabled, EngineCore runs in-process and avoids this.
+    _vllm_mp_bak = os.environ.get('VLLM_ENABLE_V1_MULTIPROCESSING')
+    os.environ['VLLM_ENABLE_V1_MULTIPROCESSING'] = '0'
+
     model = supported_VLM[model_name](**kwargs) if isinstance(model, str) else model
-    if ws_bak:
-        os.environ['WORLD_SIZE'] = ws_bak
+
+    # Restore environment
+    if _vllm_mp_bak is not None:
+        os.environ['VLLM_ENABLE_V1_MULTIPROCESSING'] = _vllm_mp_bak
+    elif 'VLLM_ENABLE_V1_MULTIPROCESSING' in os.environ:
+        del os.environ['VLLM_ENABLE_V1_MULTIPROCESSING']
+    if _vllm_host_ip_bak is not None:
+        os.environ['VLLM_HOST_IP'] = _vllm_host_ip_bak
+    elif 'VLLM_HOST_IP' in os.environ:
+        del os.environ['VLLM_HOST_IP']
+    if _vllm_port_bak is not None:
+        os.environ['VLLM_PORT'] = _vllm_port_bak
+    elif 'VLLM_PORT' in os.environ:
+        del os.environ['VLLM_PORT']
+    for _var, _val in _env_bak.items():
+        os.environ[_var] = _val
 
     is_api = getattr(model, 'is_api', False)
     if is_api:
