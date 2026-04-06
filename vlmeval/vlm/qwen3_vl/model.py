@@ -395,7 +395,7 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
         elif video_kwargs is not None:
             req['mm_processor_kwargs'] = video_kwargs
 
-        outputs = self.llm.generate([req], sampling_params=sampling_params)
+        outputs = self.llm.generate([req], sampling_params=sampling_params, use_tqdm=False)
 
         for o in outputs:
             generated_text = o.outputs[0].text
