@@ -205,7 +205,7 @@ run.sh
 run_g.sh
 tmp/
 InternVL*
-Qwen*
+# Qwen*
 CongRong*
 Seed1.5*
 aguvis*
@@ -216,7 +216,8 @@ SenseNova*
 .DS_Store
 
 temp
-result*
+results
+# result*
 debug
 outputs
 scripts/data

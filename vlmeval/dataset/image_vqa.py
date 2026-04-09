@@ -715,7 +715,7 @@ class MathVerse(ImageBaseDataset):
         if 'cot' in self.dataset_name:
             question = line['query_cot']
         else:
-            question = line['question']
+            question = line['question_for_eval']
 
         msgs = []
         if isinstance(tgt_path, list):

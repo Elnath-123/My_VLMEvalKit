@@ -46,9 +46,9 @@ def infer_data_api(model, work_dir, model_name, dataset, samples_dict={}, api_np
     packstr = 'pack' if getattr(dataset, 'pack', False) else 'nopack'
     build_prompt_input = [(samples_dict[idx], getattr(model, 'VIDEO_LLM', False)) for idx in indices]
     if dataset.nframe > 0:
-        struct_tmp_file = f'{work_dir}/{model_name}_{dataset_name}_{dataset.nframe}frame_{packstr}_structs.pkl'
+        struct_tmp_file = f'{work_dir}/{dataset_name}_{dataset.nframe}frame_{packstr}_structs.pkl'
     else:
-        struct_tmp_file = f'{work_dir}/{model_name}_{dataset_name}_{dataset.fps}fps_{packstr}_structs.pkl'
+        struct_tmp_file = f'{work_dir}/{dataset_name}_{dataset.fps}fps_{packstr}_structs.pkl'
     structs = track_progress_rich(
         dataset.build_prompt,
         tasks=build_prompt_input,
@@ -58,9 +58,9 @@ def infer_data_api(model, work_dir, model_name, dataset, samples_dict={}, api_np
     )
 
     if dataset.nframe > 0:
-        out_file = f'{work_dir}/{model_name}_{dataset_name}_{dataset.nframe}frame_{packstr}_supp.pkl'
+        out_file = f'{work_dir}/{dataset_name}_{dataset.nframe}frame_{packstr}_supp.pkl'
     else:
-        out_file = f'{work_dir}/{model_name}_{dataset_name}_{dataset.fps}fps_{packstr}_supp.pkl'
+        out_file = f'{work_dir}/{dataset_name}_{dataset.fps}fps_{packstr}_supp.pkl'
     res = load(out_file) if osp.exists(out_file) else {}
 
     structs = [s for i, s in zip(indices, structs) if i not in res or res[i] == FAIL_MSG]

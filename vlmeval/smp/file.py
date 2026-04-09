@@ -192,14 +192,14 @@ def get_pred_file_path(work_dir, model_name, dataset_name, use_env_format=True):
     if use_env_format:
         file_format = get_pred_file_format()
         if file_format == 'xlsx':
-            return osp.join(work_dir, f'{model_name}_{dataset_name}.xlsx')
+            return osp.join(work_dir, f'{dataset_name}.xlsx')
         elif file_format == 'tsv':
-            return osp.join(work_dir, f'{model_name}_{dataset_name}.tsv')
+            return osp.join(work_dir, f'{dataset_name}.tsv')
         elif file_format == 'json':
-            return osp.join(work_dir, f'{model_name}_{dataset_name}.json')
+            return osp.join(work_dir, f'{dataset_name}.json')
     else:
         # default
-        return osp.join(work_dir, f'{model_name}_{dataset_name}.xlsx')
+        return osp.join(work_dir, f'{dataset_name}.xlsx')
 
 
 def get_eval_file_path(eval_file, judge_model, use_env_format=True):
@@ -442,13 +442,13 @@ def fetch_aux_files(eval_file):
     else:
         model_name = eval_id
 
-    dataset_name = osp.splitext(file_name)[0][len(model_name) + 1:]
+    dataset_name = osp.splitext(file_name)[0]
     from vlmeval.dataset import SUPPORTED_DATASETS
     to_handle = []
     for d in SUPPORTED_DATASETS:
         if d.startswith(dataset_name) and d != dataset_name:
             to_handle.append(d)
-    fs = ls(file_root, match=f'{model_name}_{dataset_name}')
+    fs = ls(file_root, match=f'{dataset_name}')
     if len(to_handle):
         for d in to_handle:
             fs = [x for x in fs if d not in x]
@@ -487,7 +487,7 @@ def prepare_reuse_files(pred_root_meta, eval_id, model_name, dataset_name, reuse
     work_dir = osp.join(pred_root_meta, eval_id)
     os.makedirs(work_dir, exist_ok=True)
     if not reuse:
-        files = ls(work_dir, match=f'{model_name}_{dataset_name}')
+        files = ls(work_dir, match=f'{dataset_name}')
         if len(files):
             t_str = timestr('second')
             bak_dir = osp.join(work_dir, f'bak_{t_str}_{dataset_name}')
@@ -504,14 +504,14 @@ def prepare_reuse_files(pred_root_meta, eval_id, model_name, dataset_name, reuse
     prev_pred_roots.sort()
     prev_pred_roots.remove(work_dir)
 
-    files = ls(work_dir, match=f'{model_name}_{dataset_name}.')
+    files = ls(work_dir, match=f'{dataset_name}.')
     prev_file = None
     prev_aux_files = None
     if len(files):
         pass
     else:
         for root in prev_pred_roots[::-1]:
-            fs = ls(root, match=f'{model_name}_{dataset_name}.')
+            fs = ls(root, match=f'{dataset_name}.')
             if len(fs):
                 if len(fs) > 1:
                     warnings.warn(f'Multiple candidates in {root}: {fs}. Will use {fs[0]}')
@@ -524,11 +524,11 @@ def prepare_reuse_files(pred_root_meta, eval_id, model_name, dataset_name, reuse
 
     if not reuse_aux:
         warnings.warn(f'--reuse-aux is not set, all auxiliary files in {work_dir} are removed. ')
-        os.system(f'rm -rf {osp.join(work_dir, f"{model_name}_{dataset_name}_*openai*")}')
-        os.system(f'rm -rf {osp.join(work_dir, f"{model_name}_{dataset_name}_*csv")}')
-        os.system(f'rm -rf {osp.join(work_dir, f"{model_name}_{dataset_name}_*json")}')
-        os.system(f'rm -rf {osp.join(work_dir, f"{model_name}_{dataset_name}_*pkl")}')
-        os.system(f'rm -rf {osp.join(work_dir, f"{model_name}_{dataset_name}_*gpt*")}')
+        os.system(f'rm -rf {osp.join(work_dir, f"{dataset_name}_*openai*")}')
+        os.system(f'rm -rf {osp.join(work_dir, f"{dataset_name}_*csv")}')
+        os.system(f'rm -rf {osp.join(work_dir, f"{dataset_name}_*json")}')
+        os.system(f'rm -rf {osp.join(work_dir, f"{dataset_name}_*pkl")}')
+        os.system(f'rm -rf {osp.join(work_dir, f"{dataset_name}_*gpt*")}')
     elif prev_aux_files is not None:
         for f in prev_aux_files:
             os.system(f'cp {f} {work_dir}')

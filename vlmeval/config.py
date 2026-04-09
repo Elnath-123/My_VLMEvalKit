@@ -1337,17 +1337,12 @@ qwen3vl_series = {
         use_vllm=True,
         temperature=0.7,
         max_new_tokens=8192,
-        # system_prompt=(
-        #     "You are a helpful assistant. When the user asks a question, your response must include two parts: "
-        #     "first, the reasoning process enclosed in <think>...</think> tags, then the final answer enclosed in <answer>...</answer> tags."
-        #     "Please provide a clear, concise response within <answer> </answer> tags that directly addresses the question."
-        # )
         repetition_penalty=1.0,
         presence_penalty=1.5,
         top_p=0.8,
         top_k=20
     ),
-    "Qwen3-VL-4B-Instruct-lightSFT.ep1.qwen35_nothink_distill_data.mxt8192.official_sampling.vr1sysprompt": partial(
+    "Qwen3-VL-4B-Instruct-lightSFT.ep1.lr2e-5.qwen35_nothink_distill_data.mxt8192.official_sampling.vr1sysprompt": partial(
         Qwen3VLChat,
         model_path="/root/paddlejob/workspace/env_run/output/rqli/logs/LlamaFactory/sft_qwen3vl_4b_instruct.ep1.lr2e-5.qwen35_nothink_distill_data",
         use_custom_prompt=False,
@@ -1370,9 +1365,32 @@ qwen3vl_series = {
         top_p=0.8,
         top_k=20
     ),
+    "visionary_r1.Qwen3-VL-4B-Instruct-lightSFT.ep1.qwen35_nothink_distill_data.filter_easy_data_all.1thinker_rfn.lr1e-6.bs256.mbs64.mxt4096.n8.kl1e-2.fixed_ratio_sampler___mxt8192.official_sampling.vr1sysprompt": partial(
+        Qwen3VLChat,
+        model_path="",
+        use_custom_prompt=False,
+        use_vllm=True,
+        temperature=0.7,
+        max_new_tokens=8192,
+        system_prompt=(
+            "You are tasked with analyzing an image to generate an exhaustive and detailed description. "
+            "Your goal is to extract and describe all possible information from the image, including but not "
+            "limited to objects, numbers, text, and the relationships between these elements. The description "
+            "should be as fine and detailed as possible, capturing every nuance. After generating the detailed "
+            "description, you need to analyze it and provide step-by-step detailed reasoning for the given "
+            "question based on the information. Finally, provide a single word or phrase answer to the question. "
+            "The description, reasoning process and answer are enclosed within <info> </info>, <think> </think> "
+            "and <answer> </answer> tags, respectively, i.e., <info> image description here </info> "
+            "<think> reasoning process here </think> <answer> answer here </answer>.\n"
+        ),
+        repetition_penalty=1.0,
+        presence_penalty=1.5,
+        top_p=0.8,
+        top_k=20
+    ),
     "Qwen3-VL-4B-Instruct-lightSFT.ep1.lr2e-6.qwen35_nothink_distill_data.mxt8192.official_sampling.vr1sysprompt": partial(
         Qwen3VLChat,
-        model_path="/root/paddlejob/workspace/env_run/output/rqli/logs/LlamaFactory/sft_qwen3vl_4b_instruct.ep1.lr2e-5.qwen35_nothink_distill_data",
+        model_path="/root/paddlejob/workspace/env_run/output/rqli/logs/LlamaFactory/sft_qwen3vl_4b_instruct.ep1.lr2e-6.qwen35_nothink_distill_data",
         use_custom_prompt=False,
         use_vllm=True,
         temperature=0.7,
@@ -1400,16 +1418,7 @@ qwen3vl_series = {
         use_vllm=True,
         temperature=0,
         max_new_tokens=8192,
-        # system_prompt=(
-        #     "You are a helpful assistant. When the user asks a question, your response must include two parts: "
-        #     "first, the reasoning process enclosed in <think>...</think> tags, then the final answer enclosed in <answer>...</answer> tags."
-        #     "Please provide a clear, concise response within <answer> </answer> tags that directly addresses the question."
-        # )
-        # temperature=0.7, 
-        # repetition_penalty=1.0,
-        # presence_penalty=1.5,
-        # top_p=0.8,
-        # top_k=20
+
     ),
     "Qwen3-VL-2B-Instruct": partial(
         Qwen3VLChat,

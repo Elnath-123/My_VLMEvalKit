@@ -52,7 +52,7 @@ def infer_data_api(model, work_dir, model_name, dataset, index_set=None, api_npr
     lt, indices = len(data), list(data['index'])
     structs = [dataset.build_prompt(data.iloc[i]) for i in range(lt)]
 
-    out_file = f'{work_dir}/{model_name}_{dataset_name}_supp.pkl'
+    out_file = f'{work_dir}/{dataset_name}_supp.pkl'
     res = {}
     if osp.exists(out_file):
         res = load(out_file)

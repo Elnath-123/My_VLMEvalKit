@@ -306,7 +306,7 @@ def main():
 
             try:
                 pred_format = get_pred_file_format()
-                result_file_base = f'{model_name}_{dataset_name}.{pred_format}'
+                result_file_base = f'{dataset_name}.{pred_format}'
 
                 if use_config:
                     if WORLD_SIZE > 1:
@@ -523,7 +523,7 @@ def main():
 
                     # Create the symbolic links for the prediction files
                     files = os.listdir(pred_root)
-                    files = [x for x in files if (f'{model_name}_{dataset_name}' in x or "status.json" in x)]
+                    files = [x for x in files if (f'{dataset_name}' in x or "status.json" in x)]
                     for f in files:
                         cwd = os.getcwd()
                         file_addr = osp.join(cwd, pred_root, f)
