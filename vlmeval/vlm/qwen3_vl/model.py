@@ -11,7 +11,7 @@ from .prompt import Qwen3VLPromptMixin
 from ...smp import get_gpu_memory, listinstr
 
 
-VLLM_MAX_IMAGE_INPUT_NUM = 24
+VLLM_MAX_IMAGE_INPUT_NUM = 64
 
 
 def is_moe_model(model_path: str) -> bool:
@@ -394,7 +394,7 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
             req['mm_processor_kwargs'] = {"use_audio_in_video": self.use_audio_in_video}
         elif video_kwargs is not None:
             req['mm_processor_kwargs'] = video_kwargs
-            
+        import pdb; pdb.set_trace()
         outputs = self.llm.generate([req], sampling_params=sampling_params, use_tqdm=False)
 
         for o in outputs:

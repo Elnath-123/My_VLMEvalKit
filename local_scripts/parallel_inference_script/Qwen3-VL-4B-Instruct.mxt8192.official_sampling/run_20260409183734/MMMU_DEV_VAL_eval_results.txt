@@ -1,0 +1,40 @@
+-----------------------------------  ------------------  ------------------
+split                                dev                 validation
+Overall                              0.6266666666666667  0.6488888888888888
+Accounting                           0.8                 0.7
+Agriculture                          0.4                 0.5666666666666667
+Architecture_and_Engineering         0.6                 0.5333333333333333
+Art                                  0.4                 0.7
+Art_Theory                           0.8                 0.6666666666666666
+Basic_Medical_Science                0.8                 0.8
+Biology                              0.6                 0.5333333333333333
+Chemistry                            0.4                 0.4666666666666667
+Clinical_Medicine                    0.2                 0.7
+Computer_Science                     0.6                 0.6333333333333333
+Design                               0.6                 0.7666666666666667
+Diagnostics_and_Laboratory_Medicine  0.2                 0.3333333333333333
+Economics                            1.0                 0.8333333333333334
+Electronics                          0.4                 0.6
+Energy_and_Power                     0.6                 0.5666666666666667
+Finance                              0.8                 0.7666666666666667
+Geography                            0.4                 0.6
+History                              1.0                 0.7333333333333333
+Literature                           0.8                 0.7666666666666667
+Manage                               0.8                 0.6666666666666666
+Marketing                            0.6                 0.8666666666666667
+Materials                            0.6                 0.3333333333333333
+Math                                 0.6                 0.6333333333333333
+Mechanical_Engineering               0.6                 0.4666666666666667
+Music                                0.4                 0.4
+Pharmacy                             1.0                 0.7666666666666667
+Physics                              0.6                 0.8
+Psychology                           0.8                 0.7333333333333333
+Public_Health                        0.8                 0.8666666666666667
+Sociology                            0.6                 0.6666666666666666
+Art & Design                         0.55                0.6333333333333333
+Business                             0.8                 0.7666666666666667
+Health & Medicine                    0.6                 0.6933333333333334
+Humanities & Social Science          0.8                 0.725
+Science                              0.52                0.6066666666666667
+Tech & Engineering                   0.5428571428571428  0.5285714285714286
+-----------------------------------  ------------------  ------------------

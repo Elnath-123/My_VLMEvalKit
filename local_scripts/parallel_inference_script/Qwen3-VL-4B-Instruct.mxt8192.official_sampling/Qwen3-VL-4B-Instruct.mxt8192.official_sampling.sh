@@ -25,7 +25,10 @@ DATASETS=(
   # "BLINK"
   # "HallusionBench"
   # "OCRBench"
-  "MathVerse_MINI"
+  # "MathVerse_MINI"
+  "MMMU_Pro_10c"
+  # "WeMath_COT"
+  # "MMMU_DEV_VAL"
 )
 
 # 8 张卡数据并行
@@ -42,7 +45,7 @@ for DATA in "${DATASETS[@]}"; do
 
   torchrun \
     --nproc-per-node=${NGPU} \
-    --master-port=29500 \
+    --master-port=29900 \
     "${WORK_BASE}/run_custom.py" \
     --data "${DATA}" \
     --model "${MODEL}" \

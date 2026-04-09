@@ -583,7 +583,8 @@ class MMMUProDataset(MMMUDataset):
                         "Think step by step before answering. "
                     )
                 else:
-                    prompt += "Answer directly with the option letter from the given choices. "
+q                    # prompt += "Answer directly with the option letter from the given choices. "
+                    prompt += "Please select the correct answer from the options. "
 
             msgs = []
             if isinstance(tgt_path, list):
