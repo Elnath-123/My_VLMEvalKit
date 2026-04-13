@@ -15,7 +15,7 @@ from .prompt import Qwen2VLPromptMixin
 from ...smp import get_gpu_memory, listinstr, get_cache_path
 from ...dataset import DATASET_MODALITY
 
-VLLM_MAX_IMAGE_INPUT_NUM = 24
+VLLM_MAX_IMAGE_INPUT_NUM = 48
 
 
 def ensure_image_url(image: str) -> str:
