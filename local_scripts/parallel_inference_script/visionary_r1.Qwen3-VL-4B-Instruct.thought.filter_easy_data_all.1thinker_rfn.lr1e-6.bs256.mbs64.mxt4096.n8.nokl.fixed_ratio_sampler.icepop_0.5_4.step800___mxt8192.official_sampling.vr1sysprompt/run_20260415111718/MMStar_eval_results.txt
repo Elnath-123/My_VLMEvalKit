@@ -1,0 +1,10 @@
+-----------------------  -----
+split                    none
+Overall                  0.716
+coarse perception        0.736
+fine-grained perception  0.572
+instance reasoning       0.76
+logical reasoning        0.756
+math                     0.836
+science & technology     0.636
+-----------------------  -----

@@ -1,0 +1,19 @@
+--  ------------------------  ---  -  ---  --------  -------
+ 0  Overall                   304  9  121   2.96053  39.8026
+ 1  algebra                    19  1    7   5.26316  36.8421
+ 2  analytic geometry          19  2    6  10.5263   31.5789
+ 3  arithmetic                 19  0   13   0        68.4211
+ 4  combinatorial geometry     19  0    4   0        21.0526
+ 5  combinatorics              19  0    7   0        36.8421
+ 6  counting                   19  0    6   0        31.5789
+ 7  descriptive geometry       19  0    4   0        21.0526
+ 8  graph theory               19  0    5   0        26.3158
+ 9  logic                      19  0   12   0        63.1579
+10  metric geometry - angle    19  1   11   5.26316  57.8947
+11  metric geometry - area     19  2   10  10.5263   52.6316
+12  metric geometry - length   19  1    9   5.26316  47.3684
+13  solid geometry             19  1    5   5.26316  26.3158
+14  statistics                 19  1   10   5.26316  52.6316
+15  topology                   19  0    4   0        21.0526
+16  transformation geometry    19  0    8   0        42.1053
+--  ------------------------  ---  -  ---  --------  -------
