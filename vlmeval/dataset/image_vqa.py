@@ -48,28 +48,85 @@ class ImageVQADataset(ImageBaseDataset):
         'GQA_TestDev_Balanced': '99b62f22e224d9b2f32dcbe41359d1c9',
     }
 
+    # Datasets that require concise (single word or short phrase) answers
+    SHORT_ANSWER_DATASETS = []
+
     def build_prompt(self, line):
         msgs = super().build_prompt(line)
-        assert msgs[-1]['type'] == 'text'
-        msgs[-1][
-            'value'] += '\nAnswer the question using a single word or phrase.'
+        if listinstr(self.SHORT_ANSWER_DATASETS, self.dataset_name):
+            msgs[-1]['value'] += '\nYour final answer should be a single word or short phrase.'
         return msgs
 
     def evaluate(self, eval_file, **judge_kwargs):
         if judge_kwargs.get('use_verifier', False):
             return self.evaluate_verifier(eval_file, **judge_kwargs)
-        else:
-            return self.evaluate_heuristic(eval_file, **judge_kwargs)
+
+        model_name = judge_kwargs.get('model', None)
+        if model_name and model_name != 'exact_matching':
+            eval_file = self.extract_answers_with_llm(eval_file, **judge_kwargs)
+
+        return self.evaluate_heuristic(eval_file, **judge_kwargs)
+
+    def extract_answers_with_llm(self, eval_file, **judge_kwargs):
+        from .utils.vqa_extract import VQA_auxeval
+
+        model_name = judge_kwargs['model']
+        storage = get_intermediate_file_path(eval_file, f'_{model_name}_extracted')
+        tmp_file = get_intermediate_file_path(eval_file, f'_{model_name}_extracted', 'pkl')
+        nproc = judge_kwargs.get('nproc', 4)
+
+        if not osp.exists(storage):
+            data = load(eval_file)
+            model = build_judge(max_tokens=128, **judge_kwargs)
+            assert model.working(), (
+                'VQA answer extraction requires a working OPENAI API\n' + DEBUG_MESSAGE
+            )
+
+            lt = len(data)
+            lines = [data.iloc[i] for i in range(lt)]
+            tups = [(model, line, self.dataset_name) for line in lines]
+            indices = [line['index'] for line in lines]
+
+            ans = {}
+            if osp.exists(tmp_file):
+                ans = load(tmp_file)
+            tups = [x for x, i in zip(tups, indices) if i not in ans]
+            indices = [i for i in indices if i not in ans]
+
+            if len(indices):
+                new_results = track_progress_rich(
+                    VQA_auxeval,
+                    tups,
+                    nproc=nproc,
+                    chunksize=nproc,
+                    keys=indices,
+                    save=tmp_file,
+                )
+                ans = load(tmp_file)
+                for k, v in zip(indices, new_results):
+                    assert k in ans
+                    assert ans[k]['log'] == v['log'] and ans[k]['res'] == v['res']
+
+            data['prediction'] = [str(ans[idx]['res']) for idx in data['index']]
+            dump(data, storage)
+
+        return storage
 
     # It returns a DataFrame
     def evaluate_heuristic(self, eval_file, **judge_kwargs):
-        from .utils.vqa_eval import hit_calculate, process_line
+        from .utils.vqa_eval import hit_calculate, process_line, chartqa_post_process
 
         data = load(eval_file)
         dataset = self.dataset_name
         assert 'answer' in data and 'prediction' in data
         data['prediction'] = [str(x) for x in data['prediction']]
         data['answer'] = [str(x) for x in data['answer']]
+
+        if listinstr(['ChartQA'], dataset):
+            cleaned = [chartqa_post_process(p, g) for p, g in zip(data['prediction'], data['answer'])]
+            data['prediction'] = [c[0] for c in cleaned]
+            data['answer'] = [c[1] for c in cleaned]
+
         lt = len(data)
         pool = mp.Pool(16)
         lines = [data.iloc[i] for i in range(lt)]

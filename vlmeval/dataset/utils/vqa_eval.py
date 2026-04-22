@@ -2,8 +2,42 @@
 # Partly adopted from https://github.com/GT-Vision-Lab/VQA
 # Copyright (c) 2014, Aishwarya Agrawal
 
+import re
+
 from ...smp import *
 from typing import Optional
+
+
+def chartqa_post_process(pred, gt):
+    # Strip [] brackets from both gt and pred: "[Gambia, Niger]" → "Gambia, Niger"
+    pred = re.sub(r'^\[(.+)\]$', r'\1', pred.strip())
+    gt = re.sub(r'^\[(.+)\]$', r'\1', gt.strip())
+
+    # Below: only clean pred
+    # Remove trailing parenthetical for numeric pred: "9.29% (2002)" → "9.29%"
+    m = re.match(r'^([\d.,]+%?)\s*\(.*\)$', pred)
+    if m:
+        pred = m.group(1)
+
+    # Remove "percent"/"percentage"
+    pred = re.sub(r'\s*(percent|percentage)\s*$', '', pred, flags=re.IGNORECASE)
+
+    # Remove unit suffixes
+    pred = re.sub(
+        r'\s*(billion|million|trillion|thousand|hours|years|days|kg|lbs|m²|km|miles)\s*$',
+        '', pred, flags=re.IGNORECASE,
+    )
+
+    # Remove trailing "k" after digits: "213k" → "213"
+    pred = re.sub(r'(\d)k$', r'\1', pred, flags=re.IGNORECASE)
+
+    # Remove % sign: "62%" → "62"
+    pred = re.sub(r'%\s*$', '', pred)
+
+    # Remove commas in numbers: "537,689" → "537689"
+    pred = pred.replace(',', '')
+
+    return pred.strip(), gt.strip()
 
 
 def _process_digit_article(inText):

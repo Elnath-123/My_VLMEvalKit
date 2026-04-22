@@ -26,9 +26,15 @@ DATASETS=(
   # "HallusionBench"
   # "OCRBench"
   # "MathVerse_MINI"
-  "MMMU_Pro_10c"
+  # "MMMU_Pro_10c"
   # "WeMath_COT"
   # "MMMU_DEV_VAL"
+  "TextVQA_VAL"
+  "ChartQA_TEST"
+  "DocVQA_VAL"
+  "AI2D_TEST"
+  "RealWorldQA"
+  "VisuLogic"
 )
 
 # 8 张卡数据并行
@@ -51,7 +57,6 @@ for DATA in "${DATASETS[@]}"; do
     --model "${MODEL}" \
     --judge "Qwen3-235B-A22B-Instruct-2507" \
     --work-dir "${WORK_BASE}/results" \
-    --reuse \
     > "${LOG_FILE}" 2>&1
 
   echo "[$(date '+%H:%M:%S')] DONE   ${DATA}  (exit=$?)"

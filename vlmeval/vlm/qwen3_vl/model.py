@@ -5,6 +5,8 @@ import os
 import warnings
 
 import torch
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 from ..base import BaseModel
 from .prompt import Qwen3VLPromptMixin
@@ -360,15 +362,19 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
             print(f'\033[31m{messages}\033[0m')
 
         text = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        if is_omni:
-            audios, image_inputs, video_inputs = process_mm_info(messages, use_audio_in_video=self.use_audio_in_video)
-        else:
-            image_inputs, video_inputs, video_kwargs = process_vision_info(
-                messages,
-                image_patch_size=16,
-                return_video_kwargs=True,
-                return_video_metadata=True,
-            )
+        try:
+            if is_omni:
+                audios, image_inputs, video_inputs = process_mm_info(messages, use_audio_in_video=self.use_audio_in_video)
+            else:
+                image_inputs, video_inputs, video_kwargs = process_vision_info(
+                    messages,
+                    image_patch_size=16,
+                    return_video_kwargs=True,
+                    return_video_metadata=True,
+                )
+        except (OSError, AttributeError) as e:
+            logging.warning(f'Failed to load image/video: {e}, returning error message')
+            return 'Failed to obtain answer due to corrupted image'
 
         sampling_params = SamplingParams(
             temperature=self.temperature,
@@ -394,7 +400,7 @@ class Qwen3VLChat(Qwen3VLPromptMixin, BaseModel):
             req['mm_processor_kwargs'] = {"use_audio_in_video": self.use_audio_in_video}
         elif video_kwargs is not None:
             req['mm_processor_kwargs'] = video_kwargs
-        import pdb; pdb.set_trace()
+
         outputs = self.llm.generate([req], sampling_params=sampling_params, use_tqdm=False)
 
         for o in outputs:

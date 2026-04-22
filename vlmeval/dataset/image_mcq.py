@@ -1858,15 +1858,15 @@ class VisuLogic(ImageMCQDataset):
         return msgs
 
     def evaluate(self, eval_file, **judge_kwargs):
-        from .utils.visulogic import VisuLogic_acc
+        from .utils.visulogic import VisuLogic_acc, extract_answer
         from .utils.multiple_choice import mcq_vanilla_eval
 
         # model = judge_kwargs['model']
-        model = judge_kwargs.get('model', 'exact_matching')
+        model_name = judge_kwargs.get('model', 'exact_matching')
         name_str_map = {'gpt-4-0125': 'gpt4', 'gpt-4-turbo': 'gpt4-turbo', 'gpt-4o-mini': 'gpt4o-mini'}
-        name_str = name_str_map[model] if model in name_str_map else model
+        name_str = name_str_map[model_name] if model_name in name_str_map else model_name
 
-        if model == 'exact_matching':
+        if model_name == 'exact_matching':
             model = None
         else:
             model = build_judge(**judge_kwargs)
@@ -1877,10 +1877,33 @@ class VisuLogic(ImageMCQDataset):
 
         storage = get_intermediate_file_path(eval_file, f'_{name_str}')
 
-        if osp.exists(storage):
-            accuracy_scores = VisuLogic_acc(storage)
-        else:
-            accuracy_scores = VisuLogic_acc(eval_file)
+        if model is not None and not osp.exists(storage):
+            data = load(eval_file)
+            lt = len(data)
+            predictions = list(data['prediction'].astype(str))
+            for i in tqdm(range(lt), desc='VisuLogic LLM extraction'):
+                ans, method = extract_answer(predictions[i])
+                if ans == 'Z':
+                    question = data.iloc[i]['question']
+                    prompt = (
+                        'Please extract the option letter (A, B, C, or D) chosen by the model '
+                        'from the following response.\n'
+                        'Only output a single letter.\n\n'
+                        f'Question: {question}\n'
+                        f'Model response: {predictions[i]}\n'
+                        'Extracted answer:'
+                    )
+                    for retry in range(5):
+                        res = model.generate(prompt, temperature=retry * 0.5)
+                        res = res.strip().upper()[:1]
+                        if res in ['A', 'B', 'C', 'D']:
+                            predictions[i] = res
+                            break
+            data['prediction'] = predictions
+            dump(data, storage)
+
+        target = storage if osp.exists(storage) else eval_file
+        accuracy_scores = VisuLogic_acc(target)
         combine_score = {**accuracy_scores,}
         combine_score = pd.DataFrame(combine_score)
         score_pth = get_intermediate_file_path(storage, '_acc', 'csv')

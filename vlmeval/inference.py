@@ -211,7 +211,7 @@ def infer_data(model, model_name, work_dir, dataset, out_file, verbose=False, ap
             FAIL_MSG = 'Failed to obtain answer'
             try:
                 response = model.generate(message=struct, dataset=dataset_name)
-            except RuntimeError as err:
+            except (RuntimeError, OSError) as err:
                 torch.cuda.synchronize()
                 warnings.warn(f'{type(err)} {str(err)}')
                 response = f'{FAIL_MSG}: {type(err)} {str(err)}'

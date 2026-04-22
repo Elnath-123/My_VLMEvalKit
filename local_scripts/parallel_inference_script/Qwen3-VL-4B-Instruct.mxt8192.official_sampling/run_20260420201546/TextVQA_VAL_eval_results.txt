@@ -1,0 +1,7 @@
+-  ------
+0  74.774
+-  ------
+Traceback (most recent call last):
+  File "/root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit/run.py", line 532, in main
+    os.remove(link_addr)
+IsADirectoryError: [Errno 21] Is a directory: '/root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit/results/Qwen3-VL-4B-Instruct.mxt8192.official_sampling/bak_20260420173329_TextVQA_VAL'
