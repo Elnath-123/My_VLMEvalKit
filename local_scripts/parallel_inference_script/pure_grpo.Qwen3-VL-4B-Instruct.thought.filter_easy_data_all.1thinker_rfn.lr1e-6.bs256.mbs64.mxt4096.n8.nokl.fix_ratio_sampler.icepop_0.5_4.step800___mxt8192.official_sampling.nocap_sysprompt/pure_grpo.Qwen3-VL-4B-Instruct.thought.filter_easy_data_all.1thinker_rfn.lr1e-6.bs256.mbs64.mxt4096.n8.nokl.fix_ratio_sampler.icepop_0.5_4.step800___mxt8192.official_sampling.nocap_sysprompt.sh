@@ -55,7 +55,7 @@ for DATA in "${DATASETS[@]}"; do
     "${WORK_BASE}/run_custom.py" \
     --data "${DATA}" \
     --model "${MODEL}" \
-    --judge "Qwen3-235B-A22B-Instruct-2507" \
+    --judge "Qwen3-235B-A22B-Instruct-2507-2" \
     --work-dir "${WORK_BASE}/results" \
     > "${LOG_FILE}" 2>&1
 

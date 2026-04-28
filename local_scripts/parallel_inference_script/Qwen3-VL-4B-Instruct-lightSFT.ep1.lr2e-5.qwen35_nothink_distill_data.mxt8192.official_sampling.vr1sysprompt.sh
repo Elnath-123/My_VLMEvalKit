@@ -47,7 +47,7 @@ for DATA in "${DATASETS[@]}"; do
     /root/paddlejob/workspace/env_run/output/rqli/repos/VLMEvalKit/run.py \
     --data "${DATA}" \
     --model "${MODEL}" \
-    --judge "Qwen3-235B-A22B-Instruct-2507" \
+    --judge "Qwen3-235B-A22B-Instruct-2507-2" \
     --work-dir "${WORK_DIR}" \
     --reuse \
     > "${LOG_FILE}" 2>&1
