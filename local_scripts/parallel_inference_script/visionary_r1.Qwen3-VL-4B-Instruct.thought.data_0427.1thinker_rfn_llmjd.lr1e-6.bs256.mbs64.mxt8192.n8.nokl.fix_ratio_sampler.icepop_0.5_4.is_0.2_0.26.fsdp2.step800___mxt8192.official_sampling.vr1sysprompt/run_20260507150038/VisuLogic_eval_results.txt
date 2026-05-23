@@ -1,0 +1,9 @@
+-  ----------------------  ----  ---  -------
+0  Overall                 1000  271  27.1
+1  Quantitative Reasoning   353   92  26.0623
+2  Spatial Reasoning        231   64  27.7056
+3  Positional Reasoning     136   34  25
+4  Attribute Reasoning       82   16  19.5122
+5  Stylistic Reasoning       90   23  25.5556
+6  Other                    108   42  38.8889
+-  ----------------------  ----  ---  -------

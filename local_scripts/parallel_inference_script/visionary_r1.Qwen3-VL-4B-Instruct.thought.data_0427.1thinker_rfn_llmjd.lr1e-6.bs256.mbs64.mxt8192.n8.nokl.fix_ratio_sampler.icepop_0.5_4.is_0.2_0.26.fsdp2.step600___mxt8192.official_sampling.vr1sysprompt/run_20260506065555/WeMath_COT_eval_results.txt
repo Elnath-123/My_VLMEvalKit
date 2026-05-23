@@ -1,0 +1,28 @@
+-------------------------------------------  ------------
+Model                                        nan
+Score (Strict)                               69.43%
+InsufficientKnowledge (Strict)               12.95% (68)
+InadequateGeneralization (Strict)            7.43% (39)
+CompleteMastery (Strict)                     65.71% (345)
+RoteMemorization (Strict)                    17.46% (73)
+Score (Loose)                                82.95%
+InsufficientKnowledge (Loose)                12.95% (68)
+InadequateGeneralization (Loose)             7.43% (39)
+CompleteMastery (Loose)                      79.24% (416)
+RoteMemorization (Loose)                     0.48% (2)
+One-step(S1)                                 86.75%
+Two-step(S2)                                 80.00%
+Three-step(S3)                               78.79%
+Understanding and Conversion of Units        100.00%
+Angles and Length                            45.79%
+Calculation of Plane Figures                 92.13%
+Understanding of Plane Figures               84.61%
+Calculation of Solid Figures                 93.85%
+Understanding of Solid Figures               78.91%
+Basic Transformations of Figures             77.91%
+Cutting and Combining of Figures             88.16%
+Direction                                    96.67%
+Position                                     81.12%
+Route Map                                    70.88%
+Correspondence of Coordinates and Positions  86.67%
+-------------------------------------------  ------------

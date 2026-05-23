@@ -1,0 +1,15 @@
+--  ---------------------------  ----  -  ---  -  -------
+ 0  Overall                      1000  0  805  0  80.5
+ 1  scientific reasoning          122  0   91  0  74.5902
+ 2  textbook question answering   158  0  118  0  74.6835
+ 3  numeric commonsense           144  0   73  0  50.6944
+ 4  arithmetic reasoning          353  0  253  0  71.6714
+ 5  visual question answering     179  0   99  0  55.3073
+ 6  geometry reasoning            239  0  216  0  90.3766
+ 7  algebraic reasoning           281  0  246  0  87.5445
+ 8  geometry problem solving      208  0  193  0  92.7885
+ 9  math word problem             186  0  168  0  90.3226
+10  logical reasoning              37  0   17  0  45.9459
+11  figure question answering     269  0  227  0  84.3866
+12  statistical reasoning         301  0  278  0  92.3588
+--  ---------------------------  ----  -  ---  -  -------
